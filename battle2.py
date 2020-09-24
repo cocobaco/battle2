@@ -6,10 +6,15 @@ Created on Wed Jul 11 07:40:19 2018
 """
 
 import sys
+#import os
 import random
 import time
 
-MAX_HEALTH = 50
+import params
+
+MAX_HEALTH = params.MAX_HEALTH
+DMG_RANGES = params.DMG_RANGES
+
 
 class Character:
     def __init__(self, name, starting_health):
@@ -39,32 +44,42 @@ class Character:
             print(self.name + ' heals...')
             time.sleep(1)
 #            self.health = min(100, self.health + random.randint(1, 15))
-            self.get_boost(random.randint(1, 15))
+            amount = random.randint(DMG_RANGES['heal'][0], DMG_RANGES['heal'][1])
+            print('health boost:', amount)
+            self.get_boost(amount)
             print(str(self))
             print(str(other))
         elif move in ['tackle', 't']:
             print(self.name + ' tackles...')
             time.sleep(1)
+            amount = random.choice(DMG_RANGES['tackle'])
+            print('damage:', amount)
 #            other.health = max(0, other.health - random.choice([0, 5, 30]))
-            other.take_damage(random.choice([0, 5, 30]))
+            other.take_damage(amount)
             print(str(self))
             print(str(other))
         elif move in ['punch', 'p']:
             print(self.name + ' punches...')
             time.sleep(1)
+            amount = random.randint(DMG_RANGES['punch'][0], DMG_RANGES['punch'][1])
+            print('damage:', amount)
 #            other.health = max(0, other.health - random.randint(6, 17))
-            other.take_damage(random.randint(6, 17))
+            other.take_damage(amount)
             print(str(self))
             print(str(other))
         elif move in ['kick', 'k']:
             print(self.name + ' kicks...')
             time.sleep(1)
+            amount = random.randint(DMG_RANGES['kick'][0], DMG_RANGES['kick'][1])
+            print('damage:', amount)
 #            other.health = max(0, other.health - random.randint(3, 19))
-            other.take_damage(random.randint(3, 19))
+            other.take_damage(amount)
             print(str(self))
             print(str(other))
         elif move == 'q':
             sys.exit()
+#            os._exit(0)
+#            quit()
         else:
             print('invalid move. try aagin.')
             self.move(other, ai)
@@ -76,12 +91,10 @@ def battle(player, enemy):
 
     turn = random.randint(1, 2)
     if turn == 1:
-        player_turn = True
-        enemy_turn = False
+        player_turn, enemy_turn = True, False
         print('{} will go first'.format(player.name))
     else:
-        player_turn = False
-        enemy_turn = True
+        player_turn, enemy_turn = False, True
         print('{} will go first'.format(enemy.name))
 
     while (player.health > 0 and enemy.health > 0):
@@ -106,19 +119,17 @@ def battle(player, enemy):
 
 
 def main():
-    game_name = 'Battle 2'
-    print(f'Welcome to {game_name}!')
+    print('Welcome to Battle 2!')
 
-    play_again = True
-    while play_again:
-        player_health = 40
-        enemy_health = 40
+    while True:
+        player_health = MAX_HEALTH
+        enemy_health = MAX_HEALTH
         zaber = Character('Zaber', player_health)
         golem = Character('Golem', enemy_health)
         battle(zaber, golem)
 
         play_again = input("again? [y or n]: ")
-        if play_again == 'y':
+        if play_again.lower() == 'y':
             #pass
             continue
         else:
